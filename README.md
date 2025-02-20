@@ -9,24 +9,18 @@ A QSPI XiP Flash COntroller with a parameterized Direct-Mapped Cache.
 #### Wrapped IP System Integration
 
 ```verilog
-EF_QSPI_XIP_CTRL_AHBL INST (
-        .HCLK(CLK), 
-        .HRESETn(RESETn), 
-        .HADDR(HADDR), 
-        .HWRITE(HWRITE), 
-        .HSEL(HSEL), 
-        .HTRANS(HTRANS), 
-        .HWDATA(HWDATA),
-        .HRDATA(HRDATA), 
-        .HREADY(HREADY),
-        .HREADYOUT(HREADYOUT),
-        .sck(sck),
-        .ce_n(ce_n),
-        .din(din),
-        .dout(dout),
-        .douten(douten)
+EF_QSPI_XIP_CTRL_APB INST (
+	`TB_AHBL_SLAVE_CONN,
+	.sck(sck)
+	.ce_n(ce_n)
+	.dout(dout)
+	.din(din)
+	.douten(douten)
 );
 ```
+> **_NOTE:_** `TB_APB_SLAVE_CONN is a convenient macro provided by [BusWrap](https://github.com/efabless/BusWrap/tree/main).
+### Wrappers with DFT support
+Wrappers in the directory ``/hdl/rtl/bus_wrappers/DFT`` have an extra input port ``sc_testmode`` to disable the clock gate whenever the scan chain testmode is enabled.
 ### External IO interfaces
 |IO name|Direction|Width|Description|
 |---|---|---|---|
@@ -35,6 +29,8 @@ EF_QSPI_XIP_CTRL_AHBL INST (
 |dout|output|4|Flash controller SPI data out.|
 |din|input|4|Flash controller SPI data in.|
 |douten|output|4|Flash controller data out enable (Active Low)|
+### Interrupt Request Line (irq)
+This IP generates interrupts on specific events, which are described in the [Interrupt Flags](#interrupt-flags) section bellow. The IRQ port should be connected to the system interrupt controller.
 
 ## Implementation example  
 
@@ -43,7 +39,17 @@ The following table is the result for implementing the EF_QSPI_XIP_CTRL IP with 
 |---|---|---|
 |EF_QSPI_XIP_CTRL|1973| 250 |
 |EF_QSPI_XIP_CTRL_AHBL|1973|250|
+## The Programmer's Interface
 
+
+### Registers
+
+|Name|Offset|Reset Value|Access Mode|Description|
+|---|---|---|---|---|
+
+## Firmware Drivers:
+Firmware drivers for EF_QSPI_XIP_CTRL can be found in the [Drivers](https://github.com/efabless/EFIS/tree/main/Drivers) directory in the [EFIS](https://github.com/efabless/EFIS) (Efabless Firmware Interface Standard) repo. EF_QSPI_XIP_CTRL driver documentation  is available [here](https://github.com/efabless/EFIS/blob/main/Drivers/Docs/EF_QSPI_XIP_CTRL/README.md).
+You can also find an example C application using the EF_QSPI_XIP_CTRL drivers [here](https://github.com/efabless/EFIS/tree/main/Drivers/Docs/EF_QSPI_XIP_CTRL/example).
 ## Installation:
 You can install the IP either by cloning this repository or by using [IPM](https://github.com/efabless/IPM).
 ### 1. Using [IPM](https://github.com/efabless/IPM):
